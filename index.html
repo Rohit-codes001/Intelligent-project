@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: rgb(29, 28, 28);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .main {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+   
+            
+        }
+
+        .btn {
+            padding: 20px 50px;
+            font-size: 1.5rem;
+            border-radius: 2rem;
+            margin-top: 50px;
+            cursor: pointer;
+            border: none;
+            background-color: white;
+            color: black;
+            transition: 0.3s;
+        }
+
+        
+
+        .gif-image-div {
+            height: 200px;
+            width: 200px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .gif-image-div2 {
+            opacity: 1;
+        }
+
+        .gif-image-div img {
+            height: 100%;
+            width: 100%;
+            border-radius: 50%;
+        }
+        .robot-image{
+            height: 300px;
+            width: 300px;
+            filter: brightness();
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <img class="robot-image" src="https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcT-Un_xRlYCxq_NwNnXXZub35WSIx0P11NzSRXgtbDNX1sVHgFT-EKKPg1K8IpQlYrcbLzA6_tHWKhduDkdPsbeHIqlDZSPpeElnfmqxjZ23VP_FTDgGByK" alt="">
+        <h1><span>How can i help you ?</span></h1>
+        <textarea class="textareadata" style="display:none;"></textarea>
+        <div class="gif-image-div"><img src="SVKl.gif" alt="listening"></div>
+        <button class="btn" type="button">Speak Now</button>
+    </div>
+
+    <script>
+        let btn = document.querySelector(".btn");
+        let imgshow = document.querySelector(".gif-image-div");
+
+        function speakwords(userwords) {
+            let word = new SpeechSynthesisUtterance(userwords);
+            word.lang = "HI-IN";
+            speechSynthesis.speak(word);
+        }
+
+        function speechText() {
+            let user_voice_for_listening = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!user_voice_for_listening) {
+                alert("Your browser does not support Speech Recognition!");
+                return;
+            }
+
+            let listening_method = new user_voice_for_listening();
+            listening_method.lang = "en-IN";
+            listening_method.interimResults = false;
+            listening_method.maxAlternatives = 1
+
+            listening_method.onstart = () => {
+                imgshow.classList.add("gif-image-div2");
+                btn.innerHTML = "Listening...";
+            };
+
+            listening_method.onresult = (event) => {
+                let data = event.results[0][0].transcript;
+                document.querySelector(".textareadata").value = data;
+                commandes(data);
+            };
+
+            listening_method.onend = () => {
+                imgshow.classList.remove("gif-image-div2");
+                btn.innerHTML = "Speak Now";
+            };
+
+            listening_method.start();
+        }
+
+
+        function commandes(message) {
+            message = message.toLowerCase().trim().replace(/[.,!?]/g, "");
+
+
+            if (message.includes("hello") || message.includes("hi")) {
+                speakwords("Hello sir, how can I help you?");
+            } else if (message.includes("your name") || message.includes("who are you")) {
+                speakwords("My name is Sara, created by Rohit Parjapati")
+            } else if (message.includes("open youtube") || message.includes("youtube kholo")) {
+                speakwords("Opening YouTube");
+                window.open("https://www.youtube.com")
+            } else {
+                speakwords(message);
+                window.open(`https://www.google.com/search?q=${(message)}`)
+            }
+        }
+
+
+        btn.addEventListener("click", speechText);
+    </script>
+</body>
+
+</html>
